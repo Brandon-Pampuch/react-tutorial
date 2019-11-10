@@ -29,19 +29,6 @@ app.use(cors());
 // log HTTP requests
 app.use(morgan('combined'));
 
-
-
-// retrieve all questions
-app.get('/', checkJwt, (req, res) => {
-  const qs = questions.map(q => ({
-    id: q.id,
-    title: q.title,
-    description: q.description,
-    answers: q.answers.length
-  }));
-  res.send(qs);
-});
-// function for verifying jwt
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
@@ -55,6 +42,19 @@ const checkJwt = jwt({
   issuer: `https://${authConfig.domain}/`, //local host
   algorithms: ['RS256']
 });
+
+// retrieve all questions
+app.get('/', checkJwt, (req, res) => {
+  const qs = questions.map(q => ({
+    id: q.id,
+    title: q.title,
+    description: q.description,
+    answers: q.answers.length
+  }));
+  res.send(qs);
+});
+// function for verifying jwt
+
 
 // get a specific question
 app.get('/:id', checkJwt, (req, res) => {
@@ -100,5 +100,6 @@ app.post('/answer/:id', checkJwt, (req, res) => {
 app.listen(8081, () => {
   console.log('listening on port 8081');
 });
+
 
 
